@@ -1,5 +1,4 @@
 const axios = require("axios");
-const { use } = require("react");
 
 const BACKEND_URL = 'http://localhost:4000'
 const WS_URL = 'ws://localhost:4001'
