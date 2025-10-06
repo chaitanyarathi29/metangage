@@ -1,7 +1,42 @@
-const axios = require("axios");
+const axios2 = require("axios");
 
 const BACKEND_URL = 'http://localhost:4000'
 const WS_URL = 'ws://localhost:4001'
+
+const axios = {
+    post: async (...args) => {
+        try {
+            const res = await axios2.post(...args)
+            return res;
+        } catch (error) {
+            return error.response;
+        }
+    },
+    get: async (...args) => {
+        try {
+            const res = await axios2.get(...args)   
+            return res;
+        } catch (error) {
+            return error.response;
+        }
+    },
+    put: async (...args) => {   
+        try {
+            const res = await axios2.put(...args)
+            return res;
+        } catch (error) {
+            return error.response;
+        }
+    },
+    delete: async (...args) => {
+        try {
+            const res = await axios2.delete(...args)   
+            return res;
+        } catch (error) {
+            return error.response;
+        }
+    }
+}
 
 describe("Authentication", () => {
     test('User is able to sign up only once', async () => {

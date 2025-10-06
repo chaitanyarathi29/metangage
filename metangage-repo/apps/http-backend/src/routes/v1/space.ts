@@ -6,7 +6,7 @@ spaceRouter.post('/', (req, res) => {
 
 })
 
-spaceRouter.get(':/spaceId', (req, res) => {
+spaceRouter.get('/:spaceId', (req, res) => {
 
 })
 
@@ -23,5 +23,5 @@ spaceRouter.delete('/element',(req, res) => {
 })
 
 spaceRouter.get('/:spaceId', (req, res) => {
-    
+
 })
