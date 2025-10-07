@@ -1,4 +1,5 @@
 import z from 'zod';
+import type { id } from 'zod/locales';
 
 export const SignupSchema = z.object({
     username: z.string(),
@@ -22,8 +23,7 @@ export const CreateSpaceSchema = z.object({
 })
 
 export const DeleteElementSchema = z.object({
-    spaceId: z.string(),
-    elementId: z.string(),
+    id: z.string()
 })
 
 export const AddElementSchema = z.object({

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AddElementSchema, CreateSpaceSchema } from "../../types/index.js";
+import { AddElementSchema, CreateSpaceSchema, DeleteElementSchema } from "../../types/index.js";
 import client from "@repo/db/client";
 import { userMiddleware } from "../../middleware/user.js";
 
@@ -141,10 +141,67 @@ spaceRouter.post('/element', userMiddleware, async (req, res) => {
 
 })
 
-spaceRouter.delete('/element', userMiddleware,(req, res) => {
+spaceRouter.delete('/element', userMiddleware, async (req, res) => {
+    const parsedData = DeleteElementSchema.safeParse(req.body);
+    if(!parsedData.success) {
+        res.status(400).json({
+            message: "Validation failed",
+        })
+        return;
+    }
+    const spaceElement = await client.spaceElements.findFirst({
+        where: {
+            id: parsedData.data.id
+        },
+        include: {
+            space: true
+        }
+    })
+    if(!spaceElement?.space.creatorId || spaceElement.space.creatorId !== req.userId) {
+        res.status(403).json({ message: "Unauthorized" });
+        return;
+    }
+    await client.spaceElements.delete({
+        where: {
+            id: parsedData.data.id
+        }
+    })
+    res.json({ message: "Element removed from space" });
 
 })
 
-spaceRouter.get('/:spaceId', (req, res) => {
+spaceRouter.get('/:spaceId', async (req, res) => {
+    const space = await client.space.findUnique({
+        where: {
+            id: req.params.spaceId as string
+        },
+        include: {
+            elements: {
+                include: {
+                    element: true
+                }
+            }
+        }
+    })
 
+    if(!space) {
+        res.status(400).json({ message: 'Space not found'})
+        return
+    }
+
+    res.json({
+        dimensions: `${space.width}x${space.height}`,
+        elements: space.elements.map(e => ({
+            id: e.id,
+            element: {
+                e: e.element.id,
+                imageUrl: e.element.imageUrl,
+                width: e.element.width,
+                height: e.element.height,
+                static: e.element.static
+            },
+            x: e.x,
+            y: e.y
+        }))
+    })
 })
