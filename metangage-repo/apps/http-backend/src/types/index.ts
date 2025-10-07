@@ -1,13 +1,13 @@
 import z from 'zod';
 
 export const SignupSchema = z.object({
-    username: z.string().email(),
+    username: z.string(),
     password: z.string().min(0),
-    type: z.enum(["User", "admin"]),
+    type: z.enum(["User", "Admin"]).optional(),
 })
 
 export const SigninSchema = z.object({
-    username: z.string().email(),
+    username: z.string(),
     password: z.string().min(8),
 })
 
@@ -19,6 +19,11 @@ export const CreateSpaceSchema = z.object({
     name: z.string(),
     dimensions: z.string().regex(/^[0-9]{1,4}x[0-9]{1,4}$/),
     mapId: z.string(),
+})
+
+export const DeleteElementSchema = z.object({
+    spaceId: z.string(),
+    elementId: z.string(),
 })
 
 export const AddElementSchema = z.object({

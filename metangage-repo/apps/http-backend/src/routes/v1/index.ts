@@ -16,8 +16,8 @@ router.post("/signup", async (req, res) => {
     const parsedData = SignupSchema.safeParse(req.body);
     if(!parsedData.success) {
         res.status(400).json({
-            message: "Validation failed"
-        
+            message: "Validation failed",
+            error: parsedData.error
         })
         return;
     }
@@ -29,21 +29,19 @@ router.post("/signup", async (req, res) => {
             data: {
                 username: parsedData.data.username,
                 password: hashedPassword,
-                role: parsedData.data.type === "admin" ? "Admin" : "User",
+                role: parsedData.data.type === "Admin" ? "Admin" : "User",
             }
         })
         res.json({
             userId: user.id
         })
     } catch (error) {
+        console.log(error);
         res.status(400).json({
             message: "User already exists"
+
         }) 
     }
-    
-    res.json({
-        message: "signup"
-    })
 });
 
 router.post("/signin", async (req, res) => {
