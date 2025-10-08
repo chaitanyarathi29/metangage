@@ -114,7 +114,7 @@ describe("User metadata endpoint", () => {
         await axios.post(`${BACKEND_URL}/api/v1/signup`,{
             username,
             password,
-            type: "admmin"
+            type: "Admin"
         })
         
         const response = await axios.post(`${BACKEND_URL}/api/v1/signin`,{
@@ -125,11 +125,16 @@ describe("User metadata endpoint", () => {
         token = response.data.token;
 
         const avatarResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/avatar`, {
-            "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
-            "name": "Timmy"
+            imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
+            name: "Timmy"
+        }, {
+            headers: {
+                "authorization": `Bearer ${token}`
+            }
         })
 
         avatarId = avatarResponse.data.avatarId;
+        console.log(avatarResponse);
 
     })
 
@@ -142,7 +147,7 @@ describe("User metadata endpoint", () => {
             }
         })
 
-        expect(response.statusCode).toBe(400);
+        expect(response.status).toBe(400);
     });
 
     test("User can update their metadata with the right avatar id", async() => {
@@ -153,8 +158,8 @@ describe("User metadata endpoint", () => {
                 "authorization": `Bearer ${token}`
             }
         })
-
-        expect(response.statusCode).toBe(200);
+        console.log(response);
+        expect(response.status).toBe(200);
     });
 
     test("User is not able to update their metadata if the auth header is not provided", async() => {
@@ -162,7 +167,7 @@ describe("User metadata endpoint", () => {
             avatarId
         })
 
-        expect(response.statusCode).toBe(403);
+        expect(response.status).toBe(403);
     });
 })
 

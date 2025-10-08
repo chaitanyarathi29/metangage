@@ -8,6 +8,7 @@ export const userRouter = Router();
 userRouter.post('/metadata',userMiddleware, async (req, res) => {
     const parsedData = UpdateMetadataSchema.safeParse(req.body);
     if(!parsedData.success) {
+        console.log(parsedData);
         res.status(400).json({
             message: "Validation failed",
         })
@@ -26,6 +27,7 @@ userRouter.post('/metadata',userMiddleware, async (req, res) => {
         return;
     } catch (error) {
         res.status(400).json({
+            error: error,
             message: "Failed to update metadata"
         })
         return;

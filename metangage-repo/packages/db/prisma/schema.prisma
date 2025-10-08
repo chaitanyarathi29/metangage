@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id          String      @id     @unique     @default(cuid())
+  id          String      @id         @unique     @default(cuid())
   username    String      @unique
   password    String      
   avatarId    String?
@@ -59,13 +59,14 @@ model Map {
   width       Int
   height      Int
   name        String
+  thumbnail   String
   mapElements MapElements[]
 }
 
 model MapElements {
   id            String    @id     @unique     @default(cuid())
   mapId         String
-  elementId     String
+  elementId     String 
   x             Int
   y             Int
   map           Map       @relation(fields: [mapId], references: [id])
@@ -73,7 +74,7 @@ model MapElements {
 }
 
 model Avatar { 
-  id          String  @id     @unique     @default(cuid())
+  id          String      @id     @unique     @default(cuid())
   imageUrl    String?
   name        String?
   user        User[]
