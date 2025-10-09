@@ -16,8 +16,7 @@ spaceRouter.post('/', userMiddleware, async (req, res) => {
     }
 
     if(!parsedData.data.mapId) {
-
-        await client.space.create({
+        const space = await client.space.create({
             data: {
                 name: parsedData.data.name,
                 width: parsedData.data.dimensions.split("x").map(Number)[0] as number,
@@ -25,24 +24,28 @@ spaceRouter.post('/', userMiddleware, async (req, res) => {
                 creatorId: req.userId as string,    
             }
         });
-        res.json({message: "Space created"})
+        res.json({
+            message: "Space created",
+            spaceId: space.id
+        })
     }
-    const map = await client.map.findUnique({
+    else {
+        const map = await client.map.findUnique({
         where: {
-            id: parsedData.data.mapId
+            id: parsedData.data.mapId as string
         }, select: {
             mapElements: true,
             width: true,
             height: true
         }
-    })
+        })
 
-    if(!map) {
-        res.status(400).json({ message: "Map not found" });
-        return;
-    }
+        if(!map) {
+            res.status(400).json({ message: "Map not found" });
+            return;    
+        }
 
-    let space = await client.$transaction(async () => {
+        let space = await client.$transaction(async () => {
         const space = await client.space.create({
             data: {
                 name: parsedData.data.name,
@@ -61,8 +64,9 @@ spaceRouter.post('/', userMiddleware, async (req, res) => {
             }))
         })
         return space;
-    })
-    res.json({ spaceId: space.id });
+        })
+        res.json({ spaceId: space.id });
+    }
 })
 
 spaceRouter.delete('/:spaceId', userMiddleware, async (req, res) => {
@@ -77,12 +81,10 @@ spaceRouter.delete('/:spaceId', userMiddleware, async (req, res) => {
         res.status(400).json({ message: "Space not found" });
         return;
     }
-
-    if(space?.creatorId !== req.userId) {
+    if(space.creatorId !== req.userId) {
         res.status(403).json({ message: "Unauthorized" });
         return;
     }
-    
     await client.space.delete({
         where: {
             id: req.params.spaceId as string

@@ -8,7 +8,6 @@ import { hash, compare } from "../../scrypt.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
-
 export const router = Router();
 
 router.post("/signup", async (req, res) => {
@@ -79,7 +78,8 @@ router.post("/signin", async (req, res) => {
         }
 
         const token = jwt.sign({
-            userId: user.id
+            userId: user.id,
+            role: user.role
         }, secret
         );
 

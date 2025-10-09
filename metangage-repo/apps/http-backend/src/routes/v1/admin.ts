@@ -67,7 +67,10 @@ adminRouter.post('/avatar', adminMiddleware, async (req, res) => {
             imageUrl: parsedData.data.imageUrl,
         }
     })
-    res.json({ id: avatar.id })
+    res.json({ 
+        message: "Avatar created",
+        id: avatar.id 
+    })
 })
 
 adminRouter.post('/map', adminMiddleware, async (req, res) => {

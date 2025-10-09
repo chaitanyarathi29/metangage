@@ -8,14 +8,13 @@ export const userRouter = Router();
 userRouter.post('/metadata',userMiddleware, async (req, res) => {
     const parsedData = UpdateMetadataSchema.safeParse(req.body);
     if(!parsedData.success) {
-        console.log(parsedData);
         res.status(400).json({
             message: "Validation failed",
         })
         return;
     }
     try {
-        await client.user.update({
+        const updated = await client.user.update({
             where: {
                 id: req.userId ?? ""
             },
@@ -31,14 +30,13 @@ userRouter.post('/metadata',userMiddleware, async (req, res) => {
             message: "Failed to update metadata"
         })
         return;
-    }
-        
+    }        
 })
 
 userRouter.get('/metadata/bulk', userMiddleware, async (req, res) => {
+    console.log(req.query.ids);
     const userIdString = (req.query.ids ?? "[]") as string;
-    const userIds = (userIdString).slice(1, userIdString?.length - 2).split(",");
-
+    const userIds = userIdString.slice(1, -1).split(",");
     const metadata = await client.user.findMany({
         where: {
             id: {
@@ -50,7 +48,6 @@ userRouter.get('/metadata/bulk', userMiddleware, async (req, res) => {
             avatar: true
         }
     })
-
     res.json({ 
         avatars: metadata.map(m => ({
             userId: m.id,

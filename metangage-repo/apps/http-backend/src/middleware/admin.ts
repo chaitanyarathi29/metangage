@@ -18,7 +18,9 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
     try {
         const decoded = jwt.verify(token, secret) as { role: string, userId: string };
         if (decoded.role !== 'Admin') {
-            res.status(403).json({ message: 'Forbidden' });
+            res.status(403).json({ 
+                message: 'Forbidden'
+            });
             return;
         };
         req.userId = decoded.userId;
