@@ -5,7 +5,7 @@ import { adminMiddleware } from "../../middleware/admin.js";
 
 export const adminRouter = Router();
 
-adminRouter.post('/element', async (req, res) => {
+adminRouter.post('/element', adminMiddleware, async (req, res) => {
     const parsedData = CreateElementSchema.safeParse(req.body);
     if(!parsedData.success) {
         res.status(400).json({

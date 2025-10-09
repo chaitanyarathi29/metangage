@@ -559,7 +559,7 @@ describe("Arena information", () => {
         const response = await axios.get(`${BACKEND_URL}/api/v1/space/${spaceId}`);
         console.log(response.data);
         const elementId = response.data.elements[0].id;
-        const spacy = await axios.delete(`${BACKEND_URL}/api/v1/space/${spaceId}/element/${elementId}`,{
+        const spacy = await axios.delete(`${BACKEND_URL}/api/v1/space/element/${elementId}`,{
             headers: {
                 "authorization": `Bearer ${userToken}`
             }}
@@ -575,7 +575,7 @@ describe("Arena information", () => {
     });
 
     test("Adding an element fails if the element lies outside the dimensions", async () => {
-        await axios.post(`${BACKEND_URL}/api/v1/space/element`, {
+        const addelement = await axios.post(`${BACKEND_URL}/api/v1/space/element`, {
             "elementId": element1Id,
             "spaceId": spaceId,
             "x": 10000,
@@ -591,8 +591,7 @@ describe("Arena information", () => {
                 "authorization": `Bearer ${userToken}`
             }
         });
-
-        expect(newResponse.status).toBe(404);
+        expect(addelement.status).toBe(404);
     });
 
 
@@ -619,162 +618,166 @@ describe("Arena information", () => {
 
 }) 
 
-// describe("Admin Endpoints", () => {
-//     let adminToken;
-//     let adminId;
-//     let userId;
-//     let userToken;
+describe("Admin Endpoints", () => {
+    let adminToken;
+    let adminId;
+    let userId;
+    let userToken;
     
-//     beforeAll(async() => {
-//         const username = `kirat-${Math.random()}`
-//         const password = `123456`
+    beforeAll(async () => {
+        const username = `kirat-${Math.random()}`
+        const password = `123456`
 
-//         const signupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`,{
-//             username,
-//             password,
-//             type: "admin"
-//         })
+        const signupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`,{
+            username,
+            password,
+            type: "Admin"
+        })
         
-//         adminId = signupResponse.data.userId;
+        adminId = signupResponse.data.userId;
 
-//         const response = await axios.post(`${BACKEND_URL}/api/v1/signin`,{
-//             username,
-//             password,
-//         })
+        const response = await axios.post(`${BACKEND_URL}/api/v1/signin`,{
+            username,
+            password,
+        })
 
-//         adminToken = response.data.token;
+        adminToken = response.data.token;
 
-//         const UserSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`,{
-//             username: username+'-user',
-//             password,
-//             type: "user"
-//         })
+        const UserSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`,{
+            username: username + '-user',
+            password,
+            type: "User"
+        })
         
-//         userId = UserSignupResponse.data.userId;
+        userId = UserSignupResponse.data.userId;
 
-//         const UserResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`,{
-//             username: username+'-user',
-//             password
-//         })
+        const UserResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`,{
+            username: username +'-user',
+            password
+        })
 
-//         userToken = UserResponse.data.token;
+        userToken = UserResponse.data.token;
          
-//     });
+    });
 
-//     test("User is not able to hit admin Endpoints", async () => {
+    test("User is not able to hit admin Endpoints", async () => {
         
-//         const elementResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/element`,{
-//             "imageUrl": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
-//             "width": 1,
-//             "height": 1,
-//             "static": true // weather or not the user can sit on top of this element (is it considered as a collission or not)
-//         },{
-//             headers: {
-//                 "authorization": `Bearer ${userToken}`
-//             }
-//         })
+        const elementResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/element`,{
+            "imageUrl": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+            "width": 1,
+            "height": 1,
+            "static": true 
+        },{
+            headers: {
+                "authorization": `Bearer ${userToken}`
+            }
+        })
+        console.log(elementResponse.data);
 
-//         const mapResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/map`, {
-//             "thumbnail": "https://thumbnail.com/a.png",
-//             "dimensions": "100x200",
-//             "name": "100 person interview room",
-//             "defaultElements": []
-//         }, {
-//             headers: {
-//                 "authorization": `Bearer ${userToken}`
-//             }
-//         });
+        const mapResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/map`, {
+            "thumbnail": "https://thumbnail.com/a.png",
+            "dimensions": "100x200",
+            "name": "100 person interview room",
+            "defaultElements": []
+        }, {
+            headers: {
+                "authorization": `Bearer ${userToken}`
+            }
+        });
+        console.log(mapResponse.data);
 
-//         const avatarResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/avatar`, {
-//             "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
-//             "name": "Timmy"
-//         },{
-//             headers: {
-//                 "authorization": `Bearer ${userToken}`
-//             }
-//         })
+        const avatarResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/avatar`, {
+            "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
+            "name": "Timmy"
+        },{
+            headers: {
+                "authorization": `Bearer ${userToken}`
+            }
+        })
+        console.log(avatarResponse.data);
 
-//         const updateElementResponse = await axios.put(`${BACKEND_URL}/api/v1/admin/element/123`, {
-//             "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
-//             "name": "Timmy"
-//         },{
-//             headers: {
-//                 "authorization": `Bearer ${userToken}`
-//             }
-//         })
+        const updateElementResponse = await axios.put(`${BACKEND_URL}/api/v1/admin/element/123`, {
+            "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
+            "name": "Timmy"
+        },{
+            headers: {
+                "authorization": `Bearer ${userToken}`
+            }
+        })
+        console.log(updateElementResponse.data);
 
 
-//         expect(elementResponse.statusCode).toBe(403);
-//         expect(mapResponse.statusCode).toBe(403);
-//         expect(avatarResponse.statusCode).toBe(403);
-//         expect(updateElementResponse.statusCode).toBe(403);
-//     })
+        expect(elementResponse.status).toBe(403);
+        expect(mapResponse.status).toBe(403);
+        expect(avatarResponse.status).toBe(403);
+        expect(updateElementResponse.status).toBe(403);
+    })
 
-//     test("Admin is able to hit admin Endpoints", async () => {
+    test("Admin is able to hit admin Endpoints", async () => {
         
-//         const elementResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/element`,{
-//             "imageUrl": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
-//             "width": 1,
-//             "height": 1,
-//             "static": true 
-//         },{
-//             headers: {
-//                 "authorization": `Bearer ${adminToken}`
-//             }
-//         })
+        const elementResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/element`,{
+            "imageUrl": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+            "width": 1,
+            "height": 1,
+            "static": true 
+        },{
+            headers: {
+                "authorization": `Bearer ${adminToken}`
+            }
+        })
 
-//         const mapResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/map`, {
-//             "thumbnail": "https://thumbnail.com/a.png",
-//             "dimensions": "100x200",
-//             "name": "100 person interview room",
-//             "defaultElements": []
-//         }, {
-//             headers: {
-//                 "authorization": `Bearer ${adminToken}`
-//             }
-//         });
+        const mapResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/map`, {
+            "thumbnail": "https://thumbnail.com/a.png",
+            "dimensions": "100x200",
+            "name": "100 person interview room",
+            "defaultElements": []
+        }, {
+            headers: {
+                "authorization": `Bearer ${adminToken}`
+            }
+        });
 
-//         const avatarResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/avatar`, {
-//             "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
-//             "name": "Timmy"
-//         },{
-//             headers: {
-//                 "authorization": `Bearer ${adminToken}`
-//             }
-//         })
+        const avatarResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/avatar`, {
+            "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
+            "name": "Timmy"
+        },{
+            headers: {
+                "authorization": `Bearer ${adminToken}`
+            }
+        })
 
-//         expect(elementResponse.statusCode).toBe(200);
-//         expect(mapResponse.statusCode).toBe(200);
-//         expect(avatarResponse.statusCode).toBe(200);
+        expect(elementResponse.status).toBe(200);
+        expect(mapResponse.status).toBe(200);
+        expect(avatarResponse.status).toBe(200);
 
-//     })
+    })
 
-//     test("Admin is able to update an element", async () => {
+    test("Admin is able to update an element", async () => {
 
-//         const elementResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/element`,{
-//             "imageUrl": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
-//             "width": 1,
-//             "height": 1,
-//             "static": true 
-//         },{
-//             headers: {
-//                 "authorization": `Bearer ${adminToken}`
-//             }
-//         })
+        const elementResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/element`,{
+            "imageUrl": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+            "width": 1,
+            "height": 1,
+            "static": true 
+        },{
+            headers: {
+                "authorization": `Bearer ${adminToken}`
+            }
+        })
         
-//         const updateElementResponse = await axios.put(`${BACKEND_URL}/api/v1/admin/element/${elementResponse.data.id}`, {
-//             "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
-//             "name": "Timmy"
-//         },{
-//             headers: {
-//                 "authorization": `Bearer ${adminToken}`
-//             }
-//         })
-//         expect(updateElementResponse.statusCode).toBe(200);
+        const updateElementResponse = await axios.put(`${BACKEND_URL}/api/v1/admin/element/${elementResponse.data.id}`, {
+            "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
+            "name": "Timmy"
+        },{
+            headers: {
+                "authorization": `Bearer ${adminToken}`
+            }
+        })
+        expect(updateElementResponse.status).toBe(200);
 
-//     })
+    })
 
-// })
+})
 
 // describe("Websockets tests", () => {
 

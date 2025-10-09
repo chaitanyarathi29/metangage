@@ -127,6 +127,10 @@ spaceRouter.post('/element', userMiddleware, async (req, res) => {
             height: true
         }
     })
+    if(parsedData.data.x > (space?.width ?? 0) || parsedData.data.y > (space?.height ?? 0)) {
+        res.status(404).json({ message: "Element lies outside the dimensions of the space" });
+        return;
+    }
     if(!space) {
         res.status(400).json({ message: "Space not found" });
         return;
@@ -143,11 +147,13 @@ spaceRouter.post('/element', userMiddleware, async (req, res) => {
 
 })
 
-spaceRouter.delete('/element', userMiddleware, async (req, res) => {
-    const parsedData = DeleteElementSchema.safeParse(req.body);
+spaceRouter.delete('/element/:elementId', userMiddleware, async (req, res) => {
+    const id = req.params.elementId as string;
+    const parsedData = DeleteElementSchema.safeParse({ id });
     if(!parsedData.success) {
         res.status(400).json({
             message: "Validation failed",
+            error: parsedData.error
         })
         return;
     }
