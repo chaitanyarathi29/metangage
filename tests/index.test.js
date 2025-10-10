@@ -557,14 +557,12 @@ describe("Arena information", () => {
 
     test("Delete an endpoint is able to delete an element", async () => {
         const response = await axios.get(`${BACKEND_URL}/api/v1/space/${spaceId}`);
-        console.log(response.data);
         const elementId = response.data.elements[0].id;
         const spacy = await axios.delete(`${BACKEND_URL}/api/v1/space/element/${elementId}`,{
             headers: {
                 "authorization": `Bearer ${userToken}`
             }}
         );                      
-        console.log(spacy.data);
         const newResponse = await axios.get(`${BACKEND_URL}/api/v1/space/${spaceId}`,{
             headers: {
                 "authorization": `Bearer ${userToken}`
@@ -672,7 +670,6 @@ describe("Admin Endpoints", () => {
                 "authorization": `Bearer ${userToken}`
             }
         })
-        console.log(elementResponse.data);
 
         const mapResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/map`, {
             "thumbnail": "https://thumbnail.com/a.png",
@@ -684,7 +681,6 @@ describe("Admin Endpoints", () => {
                 "authorization": `Bearer ${userToken}`
             }
         });
-        console.log(mapResponse.data);
 
         const avatarResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/avatar`, {
             "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
@@ -694,7 +690,6 @@ describe("Admin Endpoints", () => {
                 "authorization": `Bearer ${userToken}`
             }
         })
-        console.log(avatarResponse.data);
 
         const updateElementResponse = await axios.put(`${BACKEND_URL}/api/v1/admin/element/123`, {
             "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
@@ -704,7 +699,6 @@ describe("Admin Endpoints", () => {
                 "authorization": `Bearer ${userToken}`
             }
         })
-        console.log(updateElementResponse.data);
 
 
         expect(elementResponse.status).toBe(403);
